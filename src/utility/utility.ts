@@ -27,24 +27,19 @@ export const fetchDataFromApi = async (
   let url = "";
   if (api === "ipdata") url = API_URL[api].replace("query", ipAddress);
   else url = API_URL[api] + ipAddress;
-  console.log(url);
-  try {
-    const fetchRes = await fetch(url);
-    if (!fetchRes.ok)
-      return res
-        .status(fetchRes.status)
-        .json({ status: "fail", message: fetchRes.statusText });
+  const fetchRes = await fetch(url);
+  if (fetchRes.ok) {
     const data = await fetchRes.json();
     if (isValidApiResponse(api, data)) return data;
-    else
-      res.status(500).json({
-        status: "fail",
-        message:
-          "selected api is not working. it may be down or may have reached the max request limit.",
-      });
-  } catch (error: any) {
-    res.status(500).json({ status: "fail", message: error.message });
-  }
+  } else
+    res.status(500).json({
+      status: "fail",
+      message:
+        "selected api is not working. it may be down or may have reached the max request limit.",
+    });
+  return res
+    .status(fetchRes.status)
+    .json({ status: "fail", message: fetchRes.statusText });
 };
 
 // convert API data to the desired ipInfo format
@@ -56,6 +51,14 @@ export const getIpInfoFromApiRes = (
   let [ip, isp, location, timezone] = Array(4).fill("");
   let [lat, lng] = Array(2).fill(0);
   switch (api) {
+    case "ipify":
+      ip = resJson.ip;
+      isp = resJson.isp;
+      location = `${resJson.location.country}, ${resJson.location.region}, ${resJson.location.city} ${resJson.location.postalCode}`;
+      timezone = "UTC" + resJson.location.timezone;
+      lat = Number(resJson.location.lat);
+      lng = Number(resJson.location.lng);
+      break;
     case "ip-api":
       ip = resJson.query;
       isp = resJson.isp;
@@ -122,17 +125,14 @@ export const getIpInfoFromApiRes = (
 // fetch IP of domain
 export const fetchIp = async (res: Response, domain: string) => {
   const url = "https://api.ipify.org/?format=json&domain=" + domain;
-  try {
-    const fetchRes = await fetch(url);
-    if (!fetchRes.ok)
-      return res
-        .status(fetchRes.status)
-        .json({ status: "fail", message: fetchRes.statusText });
+  const fetchRes = await fetch(url);
+  if (fetchRes.ok) {
     const jsonData = await fetchRes.json();
     return jsonData.query;
-  } catch (error: any) {
-    return res.status(500).json({ status: "fail", message: error.message });
   }
+  return res
+    .status(fetchRes.status)
+    .json({ status: "fail", message: fetchRes.statusText });
 };
 
 // validate IP address

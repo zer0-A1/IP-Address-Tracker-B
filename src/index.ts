@@ -47,14 +47,15 @@ app.get(
     // if ip and domain are not set, return ipInfo for request ip and api
     if (!req.query.ip && !req.query.domain) {
       // get ip from "x-forwarded-for" header on vercel
-      const requestIP = req.headers["x-forwarded-for"];
-      if (!validateIp(requestIP as string))
-        return res
-          .status(400)
-          .json({ status: "fail", message: "wrong IP address" });
+      // const requestIP = req.headers["x-forwarded-for"];
+      // if (!validateIp(requestIP as string))
+      //   return res
+      //     .status(400)
+      //     .json({ status: "fail", message: "wrong IP address" });
       const data = await fetchDataFromApi(
         res,
-        requestIP as string,
+        // requestIP as string,
+        "140.238.1.117",
         req.query.api as string
       );
       if (data)

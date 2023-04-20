@@ -42,7 +42,7 @@ var api_1 = require("../config/api");
 // functions
 // fetch data from API url
 var fetchDataFromApi = function (res, ipAddress, api) { return __awaiter(void 0, void 0, void 0, function () {
-    var url, fetchRes, data, error_1;
+    var url, fetchRes, data;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -51,33 +51,25 @@ var fetchDataFromApi = function (res, ipAddress, api) { return __awaiter(void 0,
                     url = api_1.API_URL[api].replace("query", ipAddress);
                 else
                     url = api_1.API_URL[api] + ipAddress;
-                console.log(url);
-                _a.label = 1;
-            case 1:
-                _a.trys.push([1, 4, , 5]);
                 return [4 /*yield*/, fetch(url)];
-            case 2:
+            case 1:
                 fetchRes = _a.sent();
-                if (!fetchRes.ok)
-                    return [2 /*return*/, res
-                            .status(fetchRes.status)
-                            .json({ status: "fail", message: fetchRes.statusText })];
+                if (!fetchRes.ok) return [3 /*break*/, 3];
                 return [4 /*yield*/, fetchRes.json()];
-            case 3:
+            case 2:
                 data = _a.sent();
                 if (isValidApiResponse(api, data))
                     return [2 /*return*/, data];
-                else
-                    res.status(500).json({
-                        status: "fail",
-                        message: "selected api is not working. it may be down or may have reached the max request limit.",
-                    });
-                return [3 /*break*/, 5];
-            case 4:
-                error_1 = _a.sent();
-                res.status(500).json({ status: "fail", message: error_1.message });
-                return [3 /*break*/, 5];
-            case 5: return [2 /*return*/];
+                return [3 /*break*/, 4];
+            case 3:
+                res.status(500).json({
+                    status: "fail",
+                    message: "selected api is not working. it may be down or may have reached the max request limit.",
+                });
+                _a.label = 4;
+            case 4: return [2 /*return*/, res
+                    .status(fetchRes.status)
+                    .json({ status: "fail", message: fetchRes.statusText })];
         }
     });
 }); };
@@ -87,6 +79,14 @@ var getIpInfoFromApiRes = function (res, resJson, api) {
     var _a = Array(4).fill(""), ip = _a[0], isp = _a[1], location = _a[2], timezone = _a[3];
     var _b = Array(2).fill(0), lat = _b[0], lng = _b[1];
     switch (api) {
+        case "ipify":
+            ip = resJson.ip;
+            isp = resJson.isp;
+            location = "".concat(resJson.location.country, ", ").concat(resJson.location.region, ", ").concat(resJson.location.city, " ").concat(resJson.location.postalCode);
+            timezone = "UTC" + resJson.location.timezone;
+            lat = Number(resJson.location.lat);
+            lng = Number(resJson.location.lng);
+            break;
         case "ip-api":
             ip = resJson.query;
             isp = resJson.isp;
@@ -152,29 +152,22 @@ var getIpInfoFromApiRes = function (res, resJson, api) {
 exports.getIpInfoFromApiRes = getIpInfoFromApiRes;
 // fetch IP of domain
 var fetchIp = function (res, domain) { return __awaiter(void 0, void 0, void 0, function () {
-    var url, fetchRes, jsonData, error_2;
+    var url, fetchRes, jsonData;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
                 url = "https://api.ipify.org/?format=json&domain=" + domain;
-                _a.label = 1;
-            case 1:
-                _a.trys.push([1, 4, , 5]);
                 return [4 /*yield*/, fetch(url)];
-            case 2:
+            case 1:
                 fetchRes = _a.sent();
-                if (!fetchRes.ok)
-                    return [2 /*return*/, res
-                            .status(fetchRes.status)
-                            .json({ status: "fail", message: fetchRes.statusText })];
+                if (!fetchRes.ok) return [3 /*break*/, 3];
                 return [4 /*yield*/, fetchRes.json()];
-            case 3:
+            case 2:
                 jsonData = _a.sent();
                 return [2 /*return*/, jsonData.query];
-            case 4:
-                error_2 = _a.sent();
-                return [2 /*return*/, res.status(500).json({ status: "fail", message: error_2.message })];
-            case 5: return [2 /*return*/];
+            case 3: return [2 /*return*/, res
+                    .status(fetchRes.status)
+                    .json({ status: "fail", message: fetchRes.statusText })];
         }
     });
 }); };
