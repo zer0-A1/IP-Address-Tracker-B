@@ -56,7 +56,7 @@ app.use((0, cors_1.default)());
 app.use((0, express_rate_limit_1.default)());
 var port = process.env.PORT || 443;
 app.get("/", (0, cors_1.default)(middleware_1.corsOptions), (0, express_rate_limit_1.default)(middleware_1.rateLimitOptions), function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var data, data, ip, ipInfo;
+    var requestIP, data, data, ip, ipInfo;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -70,9 +70,12 @@ app.get("/", (0, cors_1.default)(middleware_1.corsOptions), (0, express_rate_lim
                     return [2 /*return*/, res.status(400).json({ status: "fail", message: "bad request" })];
                 }
                 if (!(!req.query.ip && !req.query.domain)) return [3 /*break*/, 2];
-                return [4 /*yield*/, (0, utility_1.fetchDataFromApi)(res, 
-                    // requestIP as string,
-                    "140.238.1.117", req.query.api)];
+                requestIP = req.headers["x-forwarded-for"];
+                if (!(0, utility_1.validateIp)(requestIP))
+                    return [2 /*return*/, res
+                            .status(400)
+                            .json({ status: "fail", message: "wrong IP address" })];
+                return [4 /*yield*/, (0, utility_1.fetchDataFromApi)(res, requestIP, req.query.api)];
             case 1:
                 data = _a.sent();
                 if (data)
