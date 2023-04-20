@@ -31,12 +31,13 @@ export const fetchDataFromApi = async (
   if (fetchRes.ok) {
     const data = await fetchRes.json();
     if (isValidApiResponse(api, data)) return data;
-  } else
-    res.status(500).json({
-      status: "fail",
-      message:
-        "selected api is not working. it may be down or may have reached the max request limit.",
-    });
+    else
+      res.status(500).json({
+        status: "fail",
+        message:
+          "selected api is not working. it may be down or may have reached the max request limit.",
+      });
+  }
   return res
     .status(fetchRes.status)
     .json({ status: "fail", message: fetchRes.statusText });

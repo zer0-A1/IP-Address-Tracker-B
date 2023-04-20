@@ -60,14 +60,13 @@ var fetchDataFromApi = function (res, ipAddress, api) { return __awaiter(void 0,
                 data = _a.sent();
                 if (isValidApiResponse(api, data))
                     return [2 /*return*/, data];
-                return [3 /*break*/, 4];
-            case 3:
-                res.status(500).json({
-                    status: "fail",
-                    message: "selected api is not working. it may be down or may have reached the max request limit.",
-                });
-                _a.label = 4;
-            case 4: return [2 /*return*/, res
+                else
+                    res.status(500).json({
+                        status: "fail",
+                        message: "selected api is not working. it may be down or may have reached the max request limit.",
+                    });
+                _a.label = 3;
+            case 3: return [2 /*return*/, res
                     .status(fetchRes.status)
                     .json({ status: "fail", message: fetchRes.statusText })];
         }
