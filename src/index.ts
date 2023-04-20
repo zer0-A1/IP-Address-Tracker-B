@@ -8,8 +8,12 @@ import cors from "cors";
 import rateLimit from "express-rate-limit";
 
 // configs
-import { corsOptions, rateLimitOptions } from "./config/middleware";
-import { API_URL } from "./config/api";
+import {
+  corsOptions,
+  rateLimitOptions,
+  rateLimitOptionsList,
+} from "./config/middleware";
+import { API_URL, API_PROVIDER } from "./config/api";
 
 // types
 import { Express, Request, Response } from "express";
@@ -20,6 +24,7 @@ import {
   fetchIp,
   fetchDataFromApi,
   getIpInfoFromApiRes,
+  getDomainFromUrl,
 } from "./utility/utility";
 
 // initialization
@@ -29,6 +34,9 @@ app.use(cors());
 app.use(rateLimit());
 const port = process.env.PORT || 443;
 
+// return ip info for selected api and
+// provided ip or domain or
+// request ip if none of them are provided
 app.get(
   "/",
   cors(corsOptions),
@@ -90,6 +98,20 @@ app.get(
     // if domain and ip are not set, return error
     else
       return res.status(400).json({ status: "fail", message: "bad request" });
+  }
+);
+
+// return api list
+// higher rate limit because we're not calling any external APIs
+app.get(
+  "/list",
+  cors(corsOptions),
+  rateLimit(rateLimitOptionsList),
+  (req: Request, res: Response) => {
+    const apiList = Object.keys(API_PROVIDER).map((api) => {
+      return { [api]: getDomainFromUrl(API_PROVIDER[api]) };
+    });
+    return res.json(apiList);
   }
 );
 

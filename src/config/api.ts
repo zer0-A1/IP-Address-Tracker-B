@@ -16,10 +16,10 @@ export const API_KEYS = {
 export const API_PROVIDER: { [key: string]: string } = {
   "ip-api": "http://ip-api.com",
   ipify: "https://www.ipify.org",
-  ipgeolocation: "https://ipgeolocation.io",
-  ipwho: "https://ipwho.is",
-  ip2location: "https://www.ip2location.io/",
   ipdata: "https://ipdata.co",
+  ipwho: "https://ipwho.is",
+  ipgeolocation: "https://ipgeolocation.io",
+  ip2location: "https://www.ip2location.io/",
 };
 
 // API URL

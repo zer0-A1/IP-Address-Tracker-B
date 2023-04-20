@@ -36,7 +36,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.validateIp = exports.fetchIp = exports.getIpInfoFromApiRes = exports.fetchDataFromApi = void 0;
+exports.getDomainFromUrl = exports.validateIp = exports.fetchIp = exports.getIpInfoFromApiRes = exports.fetchDataFromApi = void 0;
 // API config
 var api_1 = require("../config/api");
 // functions
@@ -200,3 +200,14 @@ var isValidApiResponse = function (api, data) {
     }
     return isValid;
 };
+// get domain.tld from url
+// regex from "https://stackoverflow.com/a/56813210"
+var domainRegex = /(?<![^\/]\/)\b\w+\.\b\w{2,3}(?:\.\b\w{2})?(?=$|\/)/;
+var getDomainFromUrl = function (url) {
+    var matches = url.match(domainRegex);
+    if (!matches)
+        return undefined;
+    else
+        return matches[0];
+};
+exports.getDomainFromUrl = getDomainFromUrl;

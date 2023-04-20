@@ -55,6 +55,9 @@ var app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use((0, express_rate_limit_1.default)());
 var port = process.env.PORT || 443;
+// return ip info for selected api and
+// provided ip or domain or
+// request ip if none of them are provided
 app.get("/", (0, cors_1.default)(middleware_1.corsOptions), (0, express_rate_limit_1.default)(middleware_1.rateLimitOptions), function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var requestIP, data, data, ip, ipInfo;
     return __generator(this, function (_a) {
@@ -111,6 +114,15 @@ app.get("/", (0, cors_1.default)(middleware_1.corsOptions), (0, express_rate_lim
         }
     });
 }); });
+// return api list
+// higher rate limit because we're not calling any external APIs
+app.get("/list", (0, cors_1.default)(middleware_1.corsOptions), (0, express_rate_limit_1.default)(middleware_1.rateLimitOptionsList), function (req, res) {
+    var apiList = Object.keys(api_1.API_PROVIDER).map(function (api) {
+        var _a;
+        return _a = {}, _a[api] = (0, utility_1.getDomainFromUrl)(api_1.API_PROVIDER[api]), _a;
+    });
+    return res.json(apiList);
+});
 app.listen(port, function () {
     console.log("\uD83C\uDF89 Server is running at port: ".concat(port));
 });
