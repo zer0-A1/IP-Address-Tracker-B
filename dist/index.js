@@ -54,12 +54,13 @@ var utility_1 = require("./utility/utility");
 var app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use((0, express_rate_limit_1.default)());
-var port = process.env.PORT || 5000;
+var port = process.env.PORT || 443;
 app.get("/", (0, cors_1.default)(middleware_1.corsOptions), (0, express_rate_limit_1.default)(middleware_1.rateLimitOptions), function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
     var data, data, ip, ipInfo;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
+                console.log(req);
                 // alternate to using cors() middleware
                 //   res.setHeader(
                 //     "Access-Control-Allow-Origin",

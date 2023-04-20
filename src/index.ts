@@ -27,13 +27,14 @@ import {
 const app: Express = express();
 app.use(cors());
 app.use(rateLimit());
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 443;
 
 app.get(
   "/",
   cors(corsOptions),
   rateLimit(rateLimitOptions),
   async (req: Request, res: Response, next) => {
+    console.log(req);
     // alternate to using cors() middleware
     //   res.setHeader(
     //     "Access-Control-Allow-Origin",

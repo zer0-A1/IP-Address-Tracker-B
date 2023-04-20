@@ -51,6 +51,7 @@ var fetchDataFromApi = function (res, ipAddress, api) { return __awaiter(void 0,
                     url = api_1.API_URL[api].replace("query", ipAddress);
                 else
                     url = api_1.API_URL[api] + ipAddress;
+                console.log(url);
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 4, , 5]);
