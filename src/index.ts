@@ -29,9 +29,6 @@ app.use(cors());
 app.use(rateLimit());
 const port = process.env.PORT || 443;
 
-// to get ip from "x-forwarded-for" on vercel
-app.set('trust proxy',true); 
-
 app.get(
   "/",
   cors(corsOptions),
@@ -49,9 +46,15 @@ app.get(
     }
     // if ip and domain are not set, return ipInfo for request ip and api
     if (!req.query.ip && !req.query.domain) {
+      // get ip from "x-forwarded-for" header on vercel
+      const requestIP = req.headers["x-forwarded-for"];
+      if (!validateIp(requestIP as string))
+        return res
+          .status(400)
+          .json({ status: "fail", message: "wrong IP address" });
       const data = await fetchDataFromApi(
         res,
-        req.ip as string,
+        requestIP as string,
         req.query.api as string
       );
       if (data)
