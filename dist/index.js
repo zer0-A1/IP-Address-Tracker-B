@@ -50,16 +50,30 @@ var middleware_1 = require("./config/middleware");
 var api_1 = require("./config/api");
 // utility
 var utility_1 = require("./utility/utility");
+// dotenv
+var dotenv_1 = __importDefault(require("dotenv"));
+dotenv_1.default.config();
 // initialization
 var app = (0, express_1.default)();
 app.use((0, cors_1.default)());
 app.use((0, express_rate_limit_1.default)());
 var port = process.env.PORT || 443;
+// my custom middleware for checking the token
+// (token is just a pre-generated string and works like API Keys)
+var checkToken = function (req, res, next) {
+    if (!req.query.token || req.query.token !== process.env.TOKEN)
+        return res
+            .status(403)
+            .json({ status: "fail", message: "access forbidden" });
+    else
+        next();
+};
+app.use(checkToken);
 // return ip info for selected api and
 // provided ip or domain or
 // request ip if none of them are provided
-app.get("/", (0, cors_1.default)(middleware_1.corsOptions), (0, express_rate_limit_1.default)(middleware_1.rateLimitOptions), function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var requestIP, data, data, ip, ipInfo;
+app.all("/", (0, cors_1.default)(middleware_1.corsOptions), (0, express_rate_limit_1.default)(middleware_1.rateLimitOptions), function (req, res, next) { return __awaiter(void 0, void 0, void 0, function () {
+    var requestIP, data, error_1, data, error_2, ip, error_3, data, error_4, ipInfo;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -72,51 +86,91 @@ app.get("/", (0, cors_1.default)(middleware_1.corsOptions), (0, express_rate_lim
                 if (!req.query.api || !api_1.API_URL[req.query.api]) {
                     return [2 /*return*/, res.status(400).json({ status: "fail", message: "bad request" })];
                 }
-                if (!(!req.query.ip && !req.query.domain)) return [3 /*break*/, 2];
+                if (!(!req.query.ip && !req.query.domain)) return [3 /*break*/, 5];
                 requestIP = req.headers["x-forwarded-for"];
                 if (!(0, utility_1.validateIp)(requestIP))
                     return [2 /*return*/, res
                             .status(400)
                             .json({ status: "fail", message: "wrong IP address" })];
-                return [4 /*yield*/, (0, utility_1.fetchDataFromApi)(res, requestIP, req.query.api)];
+                data = void 0;
+                _a.label = 1;
             case 1:
-                data = _a.sent();
-                if (data)
-                    return [2 /*return*/, res.json((0, utility_1.getIpInfoFromApiRes)(res, data, req.query.api))];
-                return [3 /*break*/, 8];
+                _a.trys.push([1, 3, , 4]);
+                return [4 /*yield*/, (0, utility_1.fetchDataFromApi)(res, requestIP, req.query.api)];
             case 2:
-                if (!req.query.ip) return [3 /*break*/, 4];
+                data = _a.sent();
+                return [3 /*break*/, 4];
+            case 3:
+                error_1 = _a.sent();
+                return [2 /*return*/, res
+                        .status(error_1.status || 500)
+                        .json({ status: "fail", message: error_1.message })];
+            case 4: return [2 /*return*/, res.json((0, utility_1.getIpInfoFromApiRes)(res, data, req.query.api))];
+            case 5:
+                if (!req.query.ip) return [3 /*break*/, 10];
                 // if ip is not valid return error
                 if (!(0, utility_1.validateIp)(req.query.ip))
                     return [2 /*return*/, res
                             .status(400)
                             .json({ status: "fail", message: "wrong IP address" })];
+                data = void 0;
+                _a.label = 6;
+            case 6:
+                _a.trys.push([6, 8, , 9]);
                 return [4 /*yield*/, (0, utility_1.fetchDataFromApi)(res, req.query.ip, req.query.api)];
-            case 3:
+            case 7:
                 data = _a.sent();
-                return [2 /*return*/, res.json((0, utility_1.getIpInfoFromApiRes)(res, data, req.query.api))];
-            case 4:
-                if (!req.query.domain) return [3 /*break*/, 7];
+                return [3 /*break*/, 9];
+            case 8:
+                error_2 = _a.sent();
+                return [2 /*return*/, res
+                        .status(error_2.status || 500)
+                        .json({ status: "fail", message: error_2.message })];
+            case 9: return [2 /*return*/, res.json((0, utility_1.getIpInfoFromApiRes)(res, data, req.query.api))];
+            case 10:
+                if (!req.query.domain) return [3 /*break*/, 19];
+                ip = void 0;
+                _a.label = 11;
+            case 11:
+                _a.trys.push([11, 13, , 14]);
                 return [4 /*yield*/, (0, utility_1.fetchIp)(res, req.query.domain)];
-            case 5:
+            case 12:
                 ip = _a.sent();
+                return [3 /*break*/, 14];
+            case 13:
+                error_3 = _a.sent();
+                return [2 /*return*/, res
+                        .status(error_3.status || 500)
+                        .json({ status: "fail", message: error_3.message })];
+            case 14:
                 // if ip is not valid return error
                 if (!(0, utility_1.validateIp)(ip))
                     return [2 /*return*/, res
                             .status(400)
                             .json({ status: "fail", message: "wrong IP address" })];
+                data = void 0;
+                _a.label = 15;
+            case 15:
+                _a.trys.push([15, 17, , 18]);
                 return [4 /*yield*/, (0, utility_1.fetchDataFromApi)(res, ip, req.query.api)];
-            case 6:
-                ipInfo = _a.sent();
+            case 16:
+                data = _a.sent();
+                return [3 /*break*/, 18];
+            case 17:
+                error_4 = _a.sent();
+                return [2 /*return*/, res
+                        .status(error_4.status || 500)
+                        .json({ status: "fail", message: error_4.message })];
+            case 18:
+                ipInfo = (0, utility_1.getIpInfoFromApiRes)(res, data, req.query.api);
                 return [2 /*return*/, res.json(ipInfo)];
-            case 7: return [2 /*return*/, res.status(400).json({ status: "fail", message: "bad request" })];
-            case 8: return [2 /*return*/];
+            case 19: return [2 /*return*/, res.status(400).json({ status: "fail", message: "bad request" })];
         }
     });
 }); });
 // return api list
 // higher rate limit because we're not calling any external APIs
-app.get("/list", (0, cors_1.default)(middleware_1.corsOptions), (0, express_rate_limit_1.default)(middleware_1.rateLimitOptionsList), function (req, res) {
+app.all("/list", (0, cors_1.default)(middleware_1.corsOptions), (0, express_rate_limit_1.default)(middleware_1.rateLimitOptionsList), function (req, res) {
     var apiList = Object.keys(api_1.API_PROVIDER).map(function (api) {
         var _a;
         return _a = {}, _a[api] = (0, utility_1.getDomainFromUrl)(api_1.API_PROVIDER[api]), _a;

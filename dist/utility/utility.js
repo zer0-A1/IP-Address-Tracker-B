@@ -65,10 +65,11 @@ var fetchDataFromApi = function (res, ipAddress, api) { return __awaiter(void 0,
                         status: "fail",
                         message: "selected api is not working. it may be down or may have reached the max request limit.",
                     });
-                _a.label = 3;
-            case 3: return [2 /*return*/, res
-                    .status(fetchRes.status)
-                    .json({ status: "fail", message: fetchRes.statusText })];
+                return [3 /*break*/, 4];
+            case 3:
+                Promise.reject(fetchRes);
+                _a.label = 4;
+            case 4: return [2 /*return*/];
         }
     });
 }); };
@@ -164,9 +165,10 @@ var fetchIp = function (res, domain) { return __awaiter(void 0, void 0, void 0, 
             case 2:
                 jsonData = _a.sent();
                 return [2 /*return*/, jsonData.query];
-            case 3: return [2 /*return*/, res
-                    .status(fetchRes.status)
-                    .json({ status: "fail", message: fetchRes.statusText })];
+            case 3:
+                Promise.reject(fetchRes);
+                _a.label = 4;
+            case 4: return [2 /*return*/];
         }
     });
 }); };

@@ -1,5 +1,5 @@
 // express
-import express from "express";
+import express, { NextFunction } from "express";
 
 // cors
 import cors from "cors";
@@ -27,21 +27,38 @@ import {
   getDomainFromUrl,
 } from "./utility/utility";
 
-// initialization
+// dotenv
+import dotenv from "dotenv";
+dotenv.config();
 
+// initialization
 const app: Express = express();
 app.use(cors());
 app.use(rateLimit());
+
 const port = process.env.PORT || 443;
+
+// my custom middleware for checking the token
+// (token is just a pre-generated string and works like API Keys)
+
+const checkToken = (req: Request, res: Response, next: NextFunction) => {
+  if (!req.query.token || req.query.token !== process.env.TOKEN)
+    return res
+      .status(403)
+      .json({ status: "fail", message: "access forbidden" });
+  else next();
+};
+
+app.use(checkToken);
 
 // return ip info for selected api and
 // provided ip or domain or
 // request ip if none of them are provided
-app.get(
+app.all(
   "/",
   cors(corsOptions),
   rateLimit(rateLimitOptions),
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response, next: NextFunction) => {
     // alternate to using cors() middleware
     //   res.setHeader(
     //     "Access-Control-Allow-Origin",
@@ -60,15 +77,19 @@ app.get(
         return res
           .status(400)
           .json({ status: "fail", message: "wrong IP address" });
-      const data = await fetchDataFromApi(
-        res,
-        requestIP as string,
-        req.query.api as string
-      );
-      if (data)
-        return res.json(
-          getIpInfoFromApiRes(res, data, req.query.api as string)
+      let data;
+      try {
+        data = await fetchDataFromApi(
+          res,
+          requestIP as string,
+          req.query.api as string
         );
+      } catch (error: any) {
+        return res
+          .status(error.status || 500)
+          .json({ status: "fail", message: error.message });
+      }
+      return res.json(getIpInfoFromApiRes(res, data, req.query.api as string));
     }
     // if ip and api are set, return ipInfo for ip and api
     else if (req.query.ip) {
@@ -77,22 +98,44 @@ app.get(
         return res
           .status(400)
           .json({ status: "fail", message: "wrong IP address" });
-      const data = await fetchDataFromApi(
-        res,
-        req.query.ip as string,
-        req.query.api as string
-      );
+      let data;
+      try {
+        data = await fetchDataFromApi(
+          res,
+          req.query.ip as string,
+          req.query.api as string
+        );
+      } catch (error: any) {
+        return res
+          .status(error.status || 500)
+          .json({ status: "fail", message: error.message });
+      }
       return res.json(getIpInfoFromApiRes(res, data, req.query.api as string));
     }
     // if domain and api are set, get domain ip then return ipInfo for ip and api
     else if (req.query.domain) {
-      const ip = await fetchIp(res, req.query.domain as string);
+      let ip;
+      try {
+        ip = await fetchIp(res, req.query.domain as string);
+      } catch (error: any) {
+        return res
+          .status(error.status || 500)
+          .json({ status: "fail", message: error.message });
+      }
       // if ip is not valid return error
       if (!validateIp(ip))
         return res
           .status(400)
           .json({ status: "fail", message: "wrong IP address" });
-      const ipInfo = await fetchDataFromApi(res, ip, req.query.api as string);
+      let data;
+      try {
+        data = await fetchDataFromApi(res, ip, req.query.api as string);
+      } catch (error: any) {
+        return res
+          .status(error.status || 500)
+          .json({ status: "fail", message: error.message });
+      }
+      const ipInfo = getIpInfoFromApiRes(res, data, req.query.api as string);
       return res.json(ipInfo);
     }
     // if domain and ip are not set, return error
@@ -103,7 +146,7 @@ app.get(
 
 // return api list
 // higher rate limit because we're not calling any external APIs
-app.get(
+app.all(
   "/list",
   cors(corsOptions),
   rateLimit(rateLimitOptionsList),

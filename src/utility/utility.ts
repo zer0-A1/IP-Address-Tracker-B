@@ -37,10 +37,7 @@ export const fetchDataFromApi = async (
         message:
           "selected api is not working. it may be down or may have reached the max request limit.",
       });
-  }
-  return res
-    .status(fetchRes.status)
-    .json({ status: "fail", message: fetchRes.statusText });
+  } else Promise.reject(fetchRes);
 };
 
 // convert API data to the desired ipInfo format
@@ -130,10 +127,7 @@ export const fetchIp = async (res: Response, domain: string) => {
   if (fetchRes.ok) {
     const jsonData = await fetchRes.json();
     return jsonData.query;
-  }
-  return res
-    .status(fetchRes.status)
-    .json({ status: "fail", message: fetchRes.statusText });
+  } else Promise.reject(fetchRes);
 };
 
 // validate IP address
