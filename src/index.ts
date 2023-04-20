@@ -74,7 +74,6 @@ app.get(
         req.query.ip as string,
         req.query.api as string
       );
-      if (data)
         return res.json(
           getIpInfoFromApiRes(res, data, req.query.api as string)
         );

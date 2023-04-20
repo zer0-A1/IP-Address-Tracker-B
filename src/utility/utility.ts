@@ -27,13 +27,21 @@ export const fetchDataFromApi = async (
   let url = "";
   if (api === "ipdata") url = API_URL[api].replace("query", ipAddress);
   else url = API_URL[api] + ipAddress;
+  console.log(url);
   try {
     const fetchRes = await fetch(url);
     if (!fetchRes.ok)
       return res
         .status(fetchRes.status)
         .json({ status: "fail", message: fetchRes.statusText });
-    return await fetchRes.json();
+    const data = await fetchRes.json();
+    if (isValidApiResponse(api, data)) return data;
+    else
+      res.status(500).json({
+        status: "fail",
+        message:
+          "selected api is not working. it may be down or may have reached the max request limit.",
+      });
   } catch (error: any) {
     res.status(500).json({ status: "fail", message: error.message });
   }
@@ -136,4 +144,23 @@ const ipv6Regex =
 
 export const validateIp = (ip: string) => {
   return ipv4Regex.test(ip) || ipv6Regex.test(ip);
+};
+
+// validate api response
+const isValidApiResponse = (api: string, data: any) => {
+  if (!data) return false;
+  let isValid = false;
+  switch (api) {
+    case "ip-api":
+      if (data.query) isValid = true;
+      break;
+    case "ipgeolocation":
+    case "ipwho":
+    case "ip2location":
+    case "ipdata":
+    default:
+      if (data.ip) isValid = true;
+      break;
+  }
+  return isValid;
 };

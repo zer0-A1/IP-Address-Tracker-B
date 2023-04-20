@@ -42,7 +42,7 @@ var api_1 = require("../config/api");
 // functions
 // fetch data from API url
 var fetchDataFromApi = function (res, ipAddress, api) { return __awaiter(void 0, void 0, void 0, function () {
-    var url, fetchRes, error_1;
+    var url, fetchRes, data, error_1;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
@@ -51,6 +51,7 @@ var fetchDataFromApi = function (res, ipAddress, api) { return __awaiter(void 0,
                     url = api_1.API_URL[api].replace("query", ipAddress);
                 else
                     url = api_1.API_URL[api] + ipAddress;
+                console.log(url);
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 4, , 5]);
@@ -62,7 +63,16 @@ var fetchDataFromApi = function (res, ipAddress, api) { return __awaiter(void 0,
                             .status(fetchRes.status)
                             .json({ status: "fail", message: fetchRes.statusText })];
                 return [4 /*yield*/, fetchRes.json()];
-            case 3: return [2 /*return*/, _a.sent()];
+            case 3:
+                data = _a.sent();
+                if (isValidApiResponse(api, data))
+                    return [2 /*return*/, data];
+                else
+                    res.status(500).json({
+                        status: "fail",
+                        message: "selected api is not working. it may be down or may have reached the max request limit.",
+                    });
+                return [3 /*break*/, 5];
             case 4:
                 error_1 = _a.sent();
                 res.status(500).json({ status: "fail", message: error_1.message });
@@ -177,3 +187,24 @@ var validateIp = function (ip) {
     return ipv4Regex.test(ip) || ipv6Regex.test(ip);
 };
 exports.validateIp = validateIp;
+// validate api response
+var isValidApiResponse = function (api, data) {
+    if (!data)
+        return false;
+    var isValid = false;
+    switch (api) {
+        case "ip-api":
+            if (data.query)
+                isValid = true;
+            break;
+        case "ipgeolocation":
+        case "ipwho":
+        case "ip2location":
+        case "ipdata":
+        default:
+            if (data.ip)
+                isValid = true;
+            break;
+    }
+    return isValid;
+};
