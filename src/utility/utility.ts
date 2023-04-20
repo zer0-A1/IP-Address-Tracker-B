@@ -27,7 +27,6 @@ export const fetchDataFromApi = async (
   let url = "";
   if (api === "ipdata") url = API_URL[api].replace("query", ipAddress);
   else url = API_URL[api] + ipAddress;
-  console.log(url);
   try {
     const fetchRes = await fetch(url);
     if (!fetchRes.ok)
