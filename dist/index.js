@@ -79,7 +79,7 @@ app.get("/", (0, cors_1.default)(middleware_1.corsOptions), (0, express_rate_lim
             case 1:
                 data = _a.sent();
                 if (data)
-                    return [2 /*return*/, res.json((0, utility_1.getIpInfoFromApiRes)(data, req.query.api))];
+                    return [2 /*return*/, res.json((0, utility_1.getIpInfoFromApiRes)(res, data, req.query.api))];
                 return [3 /*break*/, 8];
             case 2:
                 if (!req.query.ip) return [3 /*break*/, 4];
@@ -92,7 +92,7 @@ app.get("/", (0, cors_1.default)(middleware_1.corsOptions), (0, express_rate_lim
             case 3:
                 data = _a.sent();
                 if (data)
-                    return [2 /*return*/, res.json((0, utility_1.getIpInfoFromApiRes)(data, req.query.api))];
+                    return [2 /*return*/, res.json((0, utility_1.getIpInfoFromApiRes)(res, data, req.query.api))];
                 return [3 /*break*/, 8];
             case 4:
                 if (!req.query.domain) return [3 /*break*/, 7];

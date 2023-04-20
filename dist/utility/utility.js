@@ -73,7 +73,7 @@ var fetchDataFromApi = function (res, ipAddress, api) { return __awaiter(void 0,
 }); };
 exports.fetchDataFromApi = fetchDataFromApi;
 // convert API data to the desired ipInfo format
-var getIpInfoFromApiRes = function (resJson, api) {
+var getIpInfoFromApiRes = function (res, resJson, api) {
     var _a = Array(4).fill(""), ip = _a[0], isp = _a[1], location = _a[2], timezone = _a[3];
     var _b = Array(2).fill(0), lat = _b[0], lng = _b[1];
     switch (api) {
@@ -123,7 +123,7 @@ var getIpInfoFromApiRes = function (resJson, api) {
             lng = Number(resJson.longitude);
             break;
         default:
-            return resJson
+            return res
                 .status(500)
                 .json({ status: "fail", message: "no API provided" });
     }

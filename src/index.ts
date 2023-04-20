@@ -58,7 +58,9 @@ app.get(
         req.query.api as string
       );
       if (data)
-        return res.json(getIpInfoFromApiRes(data, req.query.api as string));
+        return res.json(
+          getIpInfoFromApiRes(res, data, req.query.api as string)
+        );
     }
     // if ip and api are set, return ipInfo for ip and api
     else if (req.query.ip) {
@@ -73,7 +75,9 @@ app.get(
         req.query.api as string
       );
       if (data)
-        return res.json(getIpInfoFromApiRes(data, req.query.api as string));
+        return res.json(
+          getIpInfoFromApiRes(res, data, req.query.api as string)
+        );
     }
     // if domain and api are set, get domain ip then return ipInfo for ip and api
     else if (req.query.domain) {

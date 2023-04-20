@@ -40,7 +40,11 @@ export const fetchDataFromApi = async (
 };
 
 // convert API data to the desired ipInfo format
-export const getIpInfoFromApiRes = (resJson: any, api: string) => {
+export const getIpInfoFromApiRes = (
+  res: Response,
+  resJson: any,
+  api: string
+) => {
   let [ip, isp, location, timezone] = Array(4).fill("");
   let [lat, lng] = Array(2).fill(0);
   switch (api) {
@@ -90,7 +94,7 @@ export const getIpInfoFromApiRes = (resJson: any, api: string) => {
       lng = Number(resJson.longitude);
       break;
     default:
-      return resJson
+      return res
         .status(500)
         .json({ status: "fail", message: "no API provided" });
   }
