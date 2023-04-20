@@ -29,12 +29,14 @@ app.use(cors());
 app.use(rateLimit());
 const port = process.env.PORT || 443;
 
+// to get ip from "x-forwarded-for" on vercel
+app.set('trust proxy',true); 
+
 app.get(
   "/",
   cors(corsOptions),
   rateLimit(rateLimitOptions),
-  async (req: Request, res: Response, next) => {
-    console.log(req);
+  async (req: Request, res: Response) => {
     // alternate to using cors() middleware
     //   res.setHeader(
     //     "Access-Control-Allow-Origin",
