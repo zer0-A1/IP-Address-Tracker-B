@@ -161,7 +161,7 @@ var getIpInfoFromApiRes = function (res, resJson, api) {
 };
 exports.getIpInfoFromApiRes = getIpInfoFromApiRes;
 // fetch IP of domain
-var fetchIp = function (res, domain) { return __awaiter(void 0, void 0, void 0, function () {
+var fetchIp = function (domain) { return __awaiter(void 0, void 0, void 0, function () {
     var url, fetchRes, jsonData;
     return __generator(this, function (_a) {
         switch (_a.label) {
@@ -174,7 +174,7 @@ var fetchIp = function (res, domain) { return __awaiter(void 0, void 0, void 0, 
                 return [4 /*yield*/, fetchRes.json()];
             case 2:
                 jsonData = _a.sent();
-                return [2 /*return*/, jsonData.query];
+                return [2 /*return*/, jsonData.ip];
             case 3:
                 Promise.reject(fetchRes);
                 _a.label = 4;

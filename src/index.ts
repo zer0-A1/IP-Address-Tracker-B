@@ -101,7 +101,7 @@ app.all(
     // get the ip of the domain
     else if (req.query.domain) {
       try {
-        ip = await fetchIp(res, req.query.domain.toString());
+        ip = await fetchIp(req.query.domain.toString());
       } catch (error: any) {
         return res
           .status(error.status || 500)

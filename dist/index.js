@@ -113,7 +113,7 @@ app.all("/", (0, rateLimitFlexible_1.default)(middleware_1.rateLimitFlexibleOpti
                 _b.label = 3;
             case 3:
                 _b.trys.push([3, 5, , 6]);
-                return [4 /*yield*/, (0, utility_1.fetchIp)(res, req.query.domain.toString())];
+                return [4 /*yield*/, (0, utility_1.fetchIp)(req.query.domain.toString())];
             case 4:
                 ip = _b.sent();
                 return [3 /*break*/, 6];
