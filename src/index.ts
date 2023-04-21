@@ -105,7 +105,13 @@ app.get(
       } catch (error: any) {
         return res
           .status(error.status || 500)
-          .json({ status: "fail", message: error.message });
+          .json({
+            status: "fail",
+            message:
+              error.name === "AbortError"
+                ? "selected api took too long to respond."
+                : error.message,
+          });
       }
     }
     // validate the ip and return error if it fails

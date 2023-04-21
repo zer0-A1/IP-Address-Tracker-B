@@ -141,7 +141,7 @@ var getIpInfoFromApiRes = function (res, resJson, api) {
             location = "".concat(resJson.country_code).concat(resJson.region ? ", " + resJson.region : "").concat(resJson.city ? ", " + resJson.city : "").concat(resJson.postal ? " " + resJson.postal : "");
             timezone = resJson.time_zone.name
                 ? resJson.time_zone.name + "\nUTC" + resJson.time_zone.offset
-                : "";
+                : "N/A";
             lat = Number(resJson.latitude);
             lng = Number(resJson.longitude);
             break;
@@ -176,7 +176,12 @@ var fetchIp = function (domain) { return __awaiter(void 0, void 0, void 0, funct
                 return [4 /*yield*/, fetchRes.json()];
             case 2:
                 jsonData = _a.sent();
-                return [2 /*return*/, jsonData.query];
+                // throw error if domain name was wrong
+                if (jsonData.status === "fail" && jsonData.message === "invalid query")
+                    throw { name: "wrongDomain", message: "wrong domain name." };
+                else
+                    return [2 /*return*/, jsonData.query];
+                return [3 /*break*/, 4];
             case 3:
                 Promise.reject(fetchRes);
                 _a.label = 4;

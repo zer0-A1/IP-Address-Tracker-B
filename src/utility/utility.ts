@@ -103,7 +103,7 @@ export const getIpInfoFromApiRes = (
       }`;
       timezone = resJson.time_zone.name
         ? resJson.time_zone.name + "\nUTC" + resJson.time_zone.offset
-        : "";
+        : "N/A";
       lat = Number(resJson.latitude);
       lng = Number(resJson.longitude);
       break;
@@ -130,7 +130,10 @@ export const fetchIp = async (domain: string) => {
   const fetchRes = await fetchTimeout(url);
   if (fetchRes.ok) {
     const jsonData = await fetchRes.json();
-    return jsonData.query;
+    // throw error if domain name was wrong
+    if (jsonData.status === "fail" && jsonData.message === "invalid query")
+      throw { name: "wrongDomain", message: "wrong domain name." };
+    else return jsonData.query;
   } else Promise.reject(fetchRes);
 };
 

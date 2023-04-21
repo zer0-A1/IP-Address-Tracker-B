@@ -121,7 +121,12 @@ app.get("/", (0, rateLimitFlexible_1.default)(middleware_1.rateLimitFlexibleOpti
                 error_1 = _b.sent();
                 return [2 /*return*/, res
                         .status(error_1.status || 500)
-                        .json({ status: "fail", message: error_1.message })];
+                        .json({
+                        status: "fail",
+                        message: error_1.name === "AbortError"
+                            ? "selected api took too long to respond."
+                            : error_1.message,
+                    })];
             case 6:
                 // validate the ip and return error if it fails
                 if (!(0, utility_1.validateIp)(ip))
