@@ -170,10 +170,10 @@ export const getDomainFromUrl = (url: string) => {
 
 // adding timeout to fetch requests to fix vercel's
 // "This Serverless Function has timed out." error
-async function fetchTimeout(
+const fetchTimeout = async (
   res: RequestInfo | URL,
   options: RequestInit | undefined = {}
-) {
+) => {
   // 6 seconds limit
   const limit = 6000;
 
@@ -185,4 +185,4 @@ async function fetchTimeout(
   });
   clearTimeout(timououtId);
   return fetchRes;
-}
+};

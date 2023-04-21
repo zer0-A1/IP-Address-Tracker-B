@@ -143,7 +143,7 @@ app.all(
   checkToken,
   (_: Request, res: Response) => {
     const apiList = Object.keys(API_PROVIDER).map((api) => {
-      return { [api]: getDomainFromUrl(API_PROVIDER[api]) };
+      return { name: api, domain: getDomainFromUrl(API_PROVIDER[api]) };
     });
     return res.json(apiList);
   }

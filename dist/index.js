@@ -155,8 +155,7 @@ app.all("/", (0, rateLimitFlexible_1.default)(middleware_1.rateLimitFlexibleOpti
 // higher rate limit because we're not calling any external APIs
 app.all("/list", (0, rateLimitFlexible_1.default)(middleware_1.rateLimitFlexibleOptionsList), (0, cors_1.default)(middleware_1.corsOptions), checkToken_1.default, function (_, res) {
     var apiList = Object.keys(api_1.API_PROVIDER).map(function (api) {
-        var _a;
-        return _a = {}, _a[api] = (0, utility_1.getDomainFromUrl)(api_1.API_PROVIDER[api]), _a;
+        return { name: api, domain: (0, utility_1.getDomainFromUrl)(api_1.API_PROVIDER[api]) };
     });
     return res.json(apiList);
 });

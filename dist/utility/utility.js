@@ -225,9 +225,9 @@ var getDomainFromUrl = function (url) {
 exports.getDomainFromUrl = getDomainFromUrl;
 // adding timeout to fetch requests to fix vercel's
 // "This Serverless Function has timed out." error
-function fetchTimeout(res, options) {
+var fetchTimeout = function (res, options) {
     if (options === void 0) { options = {}; }
-    return __awaiter(this, void 0, void 0, function () {
+    return __awaiter(void 0, void 0, void 0, function () {
         var limit, controller, timououtId, fetchRes;
         return __generator(this, function (_a) {
             switch (_a.label) {
@@ -243,4 +243,4 @@ function fetchTimeout(res, options) {
             }
         });
     });
-}
+};
