@@ -80,7 +80,7 @@ app.use((0, addToJson_1.default)(fieldsToAdd));
 // return ip info for selected api and
 // provided ip or domain or
 // request ip if none of them are provided
-app.all("/", (0, rateLimitFlexible_1.default)(middleware_1.rateLimitFlexibleOptions), (0, cors_1.default)(middleware_1.corsOptions), checkToken_1.default, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+app.post("/", (0, rateLimitFlexible_1.default)(middleware_1.rateLimitFlexibleOptions), (0, cors_1.default)(middleware_1.corsOptions), checkToken_1.default, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var ip, error_1, data, error_2;
     var _a;
     return __generator(this, function (_b) {
@@ -92,10 +92,10 @@ app.all("/", (0, rateLimitFlexible_1.default)(middleware_1.rateLimitFlexibleOpti
                 //     "https://rashidshamloo.github.io"
                 //   );
                 // if api doesn't exist return error
-                if (!req.query.api || !api_1.API_URL[req.query.api]) {
+                if (!req.body.api || !api_1.API_URL[req.body.api]) {
                     return [2 /*return*/, res.status(400).json({ status: "fail", message: "bad request" })];
                 }
-                if (!(!req.query.ip && !req.query.domain)) return [3 /*break*/, 1];
+                if (!(!req.body.ip && !req.body.domain)) return [3 /*break*/, 1];
                 // get ip from "x-forwarded-for" header on vercel
                 // and return error if can't get it
                 if (!(ip = (_a = req.headers["x-forwarded-for"]) === null || _a === void 0 ? void 0 : _a.toString()))
@@ -105,15 +105,15 @@ app.all("/", (0, rateLimitFlexible_1.default)(middleware_1.rateLimitFlexibleOpti
                         })];
                 return [3 /*break*/, 6];
             case 1:
-                if (!req.query.ip) return [3 /*break*/, 2];
-                ip = req.query.ip.toString();
+                if (!req.body.ip) return [3 /*break*/, 2];
+                ip = req.body.ip.toString();
                 return [3 /*break*/, 6];
             case 2:
-                if (!req.query.domain) return [3 /*break*/, 6];
+                if (!req.body.domain) return [3 /*break*/, 6];
                 _b.label = 3;
             case 3:
                 _b.trys.push([3, 5, , 6]);
-                return [4 /*yield*/, (0, utility_1.fetchIp)(req.query.domain.toString())];
+                return [4 /*yield*/, (0, utility_1.fetchIp)(req.body.domain.toString())];
             case 4:
                 ip = _b.sent();
                 return [3 /*break*/, 6];
@@ -131,7 +131,7 @@ app.all("/", (0, rateLimitFlexible_1.default)(middleware_1.rateLimitFlexibleOpti
                 _b.label = 7;
             case 7:
                 _b.trys.push([7, 9, , 10]);
-                return [4 /*yield*/, (0, utility_1.fetchDataFromApi)(res, ip, req.query.api.toString())];
+                return [4 /*yield*/, (0, utility_1.fetchDataFromApi)(res, ip, req.body.api.toString())];
             case 8:
                 data = _b.sent();
                 return [3 /*break*/, 10];
@@ -147,10 +147,14 @@ app.all("/", (0, rateLimitFlexible_1.default)(middleware_1.rateLimitFlexibleOpti
                     })];
             case 10: 
             // return json of the formatted data
-            return [2 /*return*/, res.json((0, utility_1.getIpInfoFromApiRes)(res, data, req.query.api.toString()))];
+            return [2 /*return*/, res.json((0, utility_1.getIpInfoFromApiRes)(res, data, req.body.api.toString()))];
         }
     });
 }); });
+// show webpage on get request
+app.get("/", function (req, res) {
+    res.redirect("http://rashidshamloo.github.io/fem_033_ip-address-tracker");
+});
 // return api list
 // higher rate limit because we're not calling any external APIs
 app.all("/list", (0, rateLimitFlexible_1.default)(middleware_1.rateLimitFlexibleOptionsList), (0, cors_1.default)(middleware_1.corsOptions), checkToken_1.default, function (_, res) {

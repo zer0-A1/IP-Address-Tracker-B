@@ -3,7 +3,7 @@ import { Request, Response, NextFunction } from "express";
 
 // my custom middleware to add extra fields to json response
 
-const addToJson = (fieldsToAdd: { [key: string]: Function | string } = {}) => {
+const addToJson = (fieldsToAdd: { [key: string]: any } = {}) => {
   const myMiddleWare = (_: Request, res: Response, next: NextFunction) => {
     res.json = (object) => {
       const returnArray = Object.keys(fieldsToAdd).map((key) => {

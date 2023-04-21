@@ -5,6 +5,7 @@ exports.rateLimitFlexibleOptionsList = exports.rateLimitFlexibleOptions = export
 // cors
 exports.corsOptions = {
     origin: "https://rashidshamloo.github.io",
+    methods: ["GET", "POST"],
     optionsSuccessStatus: 200,
 };
 // rate-limit
