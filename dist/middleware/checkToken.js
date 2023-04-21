@@ -9,7 +9,7 @@ dotenv_1.default.config();
 // my custom middleware for checking the token
 // (token is just a pre-generated string and works like API Keys)
 var checkToken = function (req, res, next) {
-    if (!req.query.token || req.query.token !== process.env.TOKEN)
+    if (!req.body.token || req.body.token !== process.env.TOKEN)
         return res.status(403).json({
             status: "fail",
             message: "access forbidden",

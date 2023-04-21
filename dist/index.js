@@ -153,7 +153,7 @@ app.post("/", (0, rateLimitFlexible_1.default)(middleware_1.rateLimitFlexibleOpt
 }); });
 // show webpage on get request
 app.get("/", function (req, res) {
-    res.redirect("http://rashidshamloo.github.io/fem_033_ip-address-tracker");
+    res.redirect("https://rashidshamloo.github.io/fem_033_ip-address-tracker");
 });
 // return api list
 // higher rate limit because we're not calling any external APIs
