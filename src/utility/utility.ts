@@ -96,7 +96,11 @@ export const getIpInfoFromApiRes = (
     case "ipdata":
       ip = resJson.ip;
       isp = resJson.asn.name;
-      location = `${resJson.country_code}, ${resJson.region}, ${resJson.city} ${resJson.postal}`;
+      location = `${resJson.country_code}${
+        resJson.region && ", " + resJson.region
+      }${resJson.city && ", " + resJson.city}${
+        resJson.postal && " " + resJson.postal
+      }`;
       timezone = resJson.time_zone.name + "\nUTC" + resJson.time_zone.offset;
       lat = Number(resJson.latitude);
       lng = Number(resJson.longitude);
