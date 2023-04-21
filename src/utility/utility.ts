@@ -72,7 +72,7 @@ export const getIpInfoFromApiRes = (
         resJson.time_zone.name +
         "\n" +
         "UTC" +
-        (resJson.time_zone.offset > 0 && "+") +
+        (resJson.time_zone.offset > 0 ? "+" : "") +
         resJson.time_zone.offset;
       lat = Number(resJson.latitude);
       lng = Number(resJson.longitude);
