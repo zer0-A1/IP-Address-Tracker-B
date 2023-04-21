@@ -1,22 +1,40 @@
 // express
-import express, { NextFunction } from "express";
+import express from "express";
+
+// types
+import { Express, Request, Response } from "express";
+
+// middleware
 
 // cors
 import cors from "cors";
 
-// rate-limit
-import rateLimit from "express-rate-limit";
+// rate-limit-flexible
+import rateLimitFlexible from "./middleware/rateLimitFlexible";
+
+// my custom middleware to add {author: "github.com/rashidshamloo"} and timestamp to all json responses
+import addToJson from "./middleware/addToJson";
+
+const fieldsToAdd = {
+  author: "github.com/rashidshamloo",
+  date: () => new Date().toJSON(),
+};
+
+// my custom middleware for checking the token
+import checkToken from "./middleware/checkToken";
+
+// my custom middleware to add 'X-Powered-By' header
+import poweredBy from "./middleware/poweredBy";
 
 // configs
 import {
   corsOptions,
-  rateLimitOptions,
-  rateLimitOptionsList,
+  rateLimitFlexibleOptions,
+  rateLimitFlexibleOptionsList,
 } from "./config/middleware";
-import { API_URL, API_PROVIDER } from "./config/api";
 
-// types
-import { Express, Request, Response } from "express";
+// API data
+import { API_URL, API_PROVIDER } from "./config/api";
 
 // utility
 import {
@@ -27,38 +45,33 @@ import {
   getDomainFromUrl,
 } from "./utility/utility";
 
-// dotenv
-import dotenv from "dotenv";
-dotenv.config();
-
 // initialization
 const app: Express = express();
-app.use(cors());
-app.use(rateLimit());
-
 const port = process.env.PORT || 443;
 
-// my custom middleware for checking the token
-// (token is just a pre-generated string and works like API Keys)
+/*
+  the reason i've not added these middlewares to the app globally
+  is because i want the rate limit headers to be present on all responses
+  and since i'm using different rate-limit options for "/" and "/list" handlers
+  i can't add it to the app globally. so for these middleware to be in the chain
+  after the rateLimitFlexible, i'v added them to the handler instead.
 
-const checkToken = (req: Request, res: Response, next: NextFunction) => {
-  if (!req.query.token || req.query.token !== process.env.TOKEN)
-    return res
-      .status(403)
-      .json({ status: "fail", message: "access forbidden" });
-  else next();
-};
-
+app.use(cors(corsOptions));
 app.use(checkToken);
+*/
+
+app.use(poweredBy);
+app.use(addToJson(fieldsToAdd));
 
 // return ip info for selected api and
 // provided ip or domain or
 // request ip if none of them are provided
 app.all(
   "/",
+  rateLimitFlexible(rateLimitFlexibleOptions),
   cors(corsOptions),
-  rateLimit(rateLimitOptions),
-  async (req: Request, res: Response, next: NextFunction) => {
+  checkToken,
+  async (req: Request, res: Response) => {
     // alternate to using cors() middleware
     //   res.setHeader(
     //     "Access-Control-Allow-Origin",
@@ -69,78 +82,55 @@ app.all(
     if (!req.query.api || !API_URL[req.query.api as string]) {
       return res.status(400).json({ status: "fail", message: "bad request" });
     }
-    // if ip and domain are not set, return ipInfo for request ip and api
+    let ip;
+    // if ip and domain are not set, set ip to request ip
     if (!req.query.ip && !req.query.domain) {
       // get ip from "x-forwarded-for" header on vercel
-      const requestIP = req.headers["x-forwarded-for"];
-      if (!validateIp(requestIP as string))
-        return res
-          .status(400)
-          .json({ status: "fail", message: "wrong IP address" });
-      let data;
-      try {
-        data = await fetchDataFromApi(
-          res,
-          requestIP as string,
-          req.query.api as string
-        );
-      } catch (error: any) {
-        return res
-          .status(error.status || 500)
-          .json({ status: "fail", message: error.message });
-      }
-      return res.json(getIpInfoFromApiRes(res, data, req.query.api as string));
+      // and return error if can't get it
+      if (!(ip = req.headers["x-forwarded-for"]?.toString()))
+        return res.status(400).json({
+          status: "fail",
+          message: "no ip is provided and can't get request ip.",
+        });
     }
-    // if ip and api are set, return ipInfo for ip and api
+    // if ip is set, set ip to it
     else if (req.query.ip) {
-      // if ip is not valid return error
-      if (!validateIp(req.query.ip as string))
-        return res
-          .status(400)
-          .json({ status: "fail", message: "wrong IP address" });
-      let data;
-      try {
-        data = await fetchDataFromApi(
-          res,
-          req.query.ip as string,
-          req.query.api as string
-        );
-      } catch (error: any) {
-        return res
-          .status(error.status || 500)
-          .json({ status: "fail", message: error.message });
-      }
-      return res.json(getIpInfoFromApiRes(res, data, req.query.api as string));
+      ip = req.query.ip.toString();
     }
-    // if domain and api are set, get domain ip then return ipInfo for ip and api
+    // if no ip is set but domain is set,
+    // get the ip of the domain
     else if (req.query.domain) {
-      let ip;
       try {
-        ip = await fetchIp(res, req.query.domain as string);
+        ip = await fetchIp(res, req.query.domain.toString());
       } catch (error: any) {
         return res
           .status(error.status || 500)
           .json({ status: "fail", message: error.message });
       }
-      // if ip is not valid return error
-      if (!validateIp(ip))
-        return res
-          .status(400)
-          .json({ status: "fail", message: "wrong IP address" });
-      let data;
-      try {
-        data = await fetchDataFromApi(res, ip, req.query.api as string);
-      } catch (error: any) {
-        return res
-          .status(error.status || 500)
-          .json({ status: "fail", message: error.message });
-      }
-      const ipInfo = getIpInfoFromApiRes(res, data, req.query.api as string);
-      return res.json(ipInfo);
     }
-    // if domain and ip are not set, return error
-    else
-      return res.status(400).json({ status: "fail", message: "bad request" });
+    // validate the ip and return error if it fails
+    if (!validateIp(ip))
+      return res
+        .status(400)
+        .json({ status: "fail", message: "wrong IP address" });
+
+    // get the data from api
+    let data;
+    try {
+      data = await fetchDataFromApi(res, ip, req.query.api.toString());
+    } catch (error: any) {
+      // return error message and if the error was because of time out,
+      // show a better message instead of just "aborted"
+      return res.status(error.status || 500).json({
+        status: "fail",
+        message:
+          error.name === "AbortError"
+            ? "selected api took too long to respond."
+            : error.message,
+      });
+    }
+    // return json of the formatted data
+    return res.json(getIpInfoFromApiRes(res, data, req.query.api.toString()));
   }
 );
 
@@ -148,9 +138,10 @@ app.all(
 // higher rate limit because we're not calling any external APIs
 app.all(
   "/list",
+  rateLimitFlexible(rateLimitFlexibleOptionsList),
   cors(corsOptions),
-  rateLimit(rateLimitOptionsList),
-  (req: Request, res: Response) => {
+  checkToken,
+  (_: Request, res: Response) => {
     const apiList = Object.keys(API_PROVIDER).map((api) => {
       return { [api]: getDomainFromUrl(API_PROVIDER[api]) };
     });

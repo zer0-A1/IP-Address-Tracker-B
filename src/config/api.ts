@@ -5,7 +5,7 @@ dotenv.config();
 // API variables
 
 // API KEY
-export const API_KEYS = {
+export const API_KEYS: { [key: string]: string | undefined } = {
   ipify: process.env.API_KEY_IPIFY,
   ipgeolocation: process.env.API_KEY_IPGEOLOCATION,
   ip2location: process.env.API_KEY_IP2LOCATION,

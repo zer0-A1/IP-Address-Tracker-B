@@ -1,31 +1,24 @@
+import { IRateLimiterOptions } from "rate-limiter-flexible";
+import { CorsOptions } from "cors";
+
 // middleware options
 
 // cors
-export const corsOptions = {
+export const corsOptions: CorsOptions = {
   origin: "https://rashidshamloo.github.io",
   optionsSuccessStatus: 200,
 };
 
 // rate-limit
-export const rateLimitOptions = {
-  // time window in ms: 1 day
-  windowMs: 24 * 60 * 60 * 1000,
-  // max requests per IP per window
-  max: 100,
-  // enable `RateLimit-` headers
-  standardHeaders: true,
-  // disable `X-RateLimit-` headers
-  legacyHeaders: false,
+export const rateLimitFlexibleOptions: IRateLimiterOptions = {
+  points: 100,
+  // Per day
+  duration: 24 * 60 * 60,
 };
 
 // rate-limit for api list
-export const rateLimitOptionsList = {
-  // time window in ms: 1 day
-  windowMs: 24 * 60 * 60 * 1000,
-  // max requests per IP per window
-  max: 1000,
-  // enable `RateLimit-` headers
-  standardHeaders: true,
-  // disable `X-RateLimit-` headers
-  legacyHeaders: false,
+export const rateLimitFlexibleOptionsList: IRateLimiterOptions = {
+  points: 1000,
+  // Per day
+  duration: 24 * 60 * 60,
 };

@@ -13,7 +13,6 @@ interface ipInfo {
   lat: number;
   lng: number;
   provider: string;
-  author: string;
 }
 
 // functions
@@ -27,7 +26,7 @@ export const fetchDataFromApi = async (
   let url = "";
   if (api === "ipdata") url = API_URL[api].replace("query", ipAddress);
   else url = API_URL[api] + ipAddress;
-  const fetchRes = await fetch(url);
+  const fetchRes = await fetchTimeout(url);
   if (fetchRes.ok) {
     const data = await fetchRes.json();
     if (isValidApiResponse(api, data)) return data;
@@ -115,7 +114,6 @@ export const getIpInfoFromApiRes = (
     lat: lat,
     lng: lng,
     provider: API_PROVIDER[api],
-    author: "https://github.com/rashidshamloo",
   };
   return ipinfo;
 };
@@ -123,7 +121,7 @@ export const getIpInfoFromApiRes = (
 // fetch IP of domain
 export const fetchIp = async (res: Response, domain: string) => {
   const url = "https://api.ipify.org/?format=json&domain=" + domain;
-  const fetchRes = await fetch(url);
+  const fetchRes = await fetchTimeout(url);
   if (fetchRes.ok) {
     const jsonData = await fetchRes.json();
     return jsonData.query;
@@ -169,3 +167,22 @@ export const getDomainFromUrl = (url: string) => {
   if (!matches) return undefined;
   else return matches[0];
 };
+
+// adding timeout to fetch requests to fix vercel's
+// "This Serverless Function has timed out." error
+async function fetchTimeout(
+  res: RequestInfo | URL,
+  options: RequestInit | undefined = {}
+) {
+  // 6 seconds limit
+  const limit = 6000;
+
+  const controller = new AbortController();
+  const timououtId = setTimeout(() => controller.abort(), limit);
+  const fetchRes = await fetch(res, {
+    ...options,
+    signal: controller.signal,
+  });
+  clearTimeout(timououtId);
+  return fetchRes;
+}

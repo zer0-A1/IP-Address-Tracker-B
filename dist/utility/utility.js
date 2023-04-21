@@ -1,4 +1,15 @@
 "use strict";
+var __assign = (this && this.__assign) || function () {
+    __assign = Object.assign || function(t) {
+        for (var s, i = 1, n = arguments.length; i < n; i++) {
+            s = arguments[i];
+            for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+                t[p] = s[p];
+        }
+        return t;
+    };
+    return __assign.apply(this, arguments);
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -51,7 +62,7 @@ var fetchDataFromApi = function (res, ipAddress, api) { return __awaiter(void 0,
                     url = api_1.API_URL[api].replace("query", ipAddress);
                 else
                     url = api_1.API_URL[api] + ipAddress;
-                return [4 /*yield*/, fetch(url)];
+                return [4 /*yield*/, fetchTimeout(url)];
             case 1:
                 fetchRes = _a.sent();
                 if (!fetchRes.ok) return [3 /*break*/, 3];
@@ -145,7 +156,6 @@ var getIpInfoFromApiRes = function (res, resJson, api) {
         lat: lat,
         lng: lng,
         provider: api_1.API_PROVIDER[api],
-        author: "https://github.com/rashidshamloo",
     };
     return ipinfo;
 };
@@ -157,7 +167,7 @@ var fetchIp = function (res, domain) { return __awaiter(void 0, void 0, void 0, 
         switch (_a.label) {
             case 0:
                 url = "https://api.ipify.org/?format=json&domain=" + domain;
-                return [4 /*yield*/, fetch(url)];
+                return [4 /*yield*/, fetchTimeout(url)];
             case 1:
                 fetchRes = _a.sent();
                 if (!fetchRes.ok) return [3 /*break*/, 3];
@@ -213,3 +223,24 @@ var getDomainFromUrl = function (url) {
         return matches[0];
 };
 exports.getDomainFromUrl = getDomainFromUrl;
+// adding timeout to fetch requests to fix vercel's
+// "This Serverless Function has timed out." error
+function fetchTimeout(res, options) {
+    if (options === void 0) { options = {}; }
+    return __awaiter(this, void 0, void 0, function () {
+        var limit, controller, timououtId, fetchRes;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    limit = 6000;
+                    controller = new AbortController();
+                    timououtId = setTimeout(function () { return controller.abort(); }, limit);
+                    return [4 /*yield*/, fetch(res, __assign(__assign({}, options), { signal: controller.signal }))];
+                case 1:
+                    fetchRes = _a.sent();
+                    clearTimeout(timououtId);
+                    return [2 /*return*/, fetchRes];
+            }
+        });
+    });
+}
