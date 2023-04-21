@@ -6,7 +6,7 @@ import { CorsOptions } from "cors";
 // cors
 export const corsOptions: CorsOptions = {
   origin: "https://rashidshamloo.github.io",
-  methods: ["GET", "POST"],
+  methods: "GET",
   optionsSuccessStatus: 200,
 };
 

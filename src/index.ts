@@ -66,7 +66,7 @@ app.use(addToJson(fieldsToAdd));
 // return ip info for selected api and
 // provided ip or domain or
 // request ip if none of them are provided
-app.post(
+app.get(
   "/",
   rateLimitFlexible(rateLimitFlexibleOptions),
   cors(corsOptions),
@@ -79,12 +79,12 @@ app.post(
     //   );
 
     // if api doesn't exist return error
-    if (!req.body.api || !API_URL[req.body.api as string]) {
+    if (!req.query.api || !API_URL[req.query.api.toString()]) {
       return res.status(400).json({ status: "fail", message: "bad request" });
     }
     let ip;
     // if ip and domain are not set, set ip to request ip
-    if (!req.body.ip && !req.body.domain) {
+    if (!req.query.ip && !req.query.domain) {
       // get ip from "x-forwarded-for" header on vercel
       // and return error if can't get it
       if (!(ip = req.headers["x-forwarded-for"]?.toString()))
@@ -94,14 +94,14 @@ app.post(
         });
     }
     // if ip is set, set ip to it
-    else if (req.body.ip) {
-      ip = req.body.ip.toString();
+    else if (req.query.ip) {
+      ip = req.query.ip.toString();
     }
     // if no ip is set but domain is set,
     // get the ip of the domain
-    else if (req.body.domain) {
+    else if (req.query.domain) {
       try {
-        ip = await fetchIp(req.body.domain.toString());
+        ip = await fetchIp(req.query.domain.toString());
       } catch (error: any) {
         return res
           .status(error.status || 500)
@@ -117,7 +117,7 @@ app.post(
     // get the data from api
     let data;
     try {
-      data = await fetchDataFromApi(res, ip, req.body.api.toString());
+      data = await fetchDataFromApi(res, ip, req.query.api.toString());
     } catch (error: any) {
       // return error message and if the error was because of time out,
       // show a better message instead of just "aborted"
@@ -130,18 +130,13 @@ app.post(
       });
     }
     // return json of the formatted data
-    return res.json(getIpInfoFromApiRes(res, data, req.body.api.toString()));
+    return res.json(getIpInfoFromApiRes(res, data, req.query.api.toString()));
   }
 );
 
-// show webpage on get request
-app.get("/", (req: Request, res: Response) => {
-  res.redirect("https://rashidshamloo.github.io/fem_033_ip-address-tracker");
-});
-
 // return api list
 // higher rate limit because we're not calling any external APIs
-app.all(
+app.get(
   "/list",
   rateLimitFlexible(rateLimitFlexibleOptionsList),
   cors(corsOptions),
