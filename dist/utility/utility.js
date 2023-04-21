@@ -166,7 +166,7 @@ var fetchIp = function (domain) { return __awaiter(void 0, void 0, void 0, funct
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                url = "https://api.ipify.org/?format=json&domain=" + domain;
+                url = "http://ip-api.com/json/" + domain;
                 return [4 /*yield*/, fetchTimeout(url)];
             case 1:
                 fetchRes = _a.sent();
@@ -174,7 +174,7 @@ var fetchIp = function (domain) { return __awaiter(void 0, void 0, void 0, funct
                 return [4 /*yield*/, fetchRes.json()];
             case 2:
                 jsonData = _a.sent();
-                return [2 /*return*/, jsonData.ip];
+                return [2 /*return*/, jsonData.query];
             case 3:
                 Promise.reject(fetchRes);
                 _a.label = 4;

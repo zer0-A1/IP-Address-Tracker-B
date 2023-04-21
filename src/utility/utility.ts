@@ -120,11 +120,11 @@ export const getIpInfoFromApiRes = (
 
 // fetch IP of domain
 export const fetchIp = async (domain: string) => {
-  const url = "https://api.ipify.org/?format=json&domain=" + domain;
+  const url = "http://ip-api.com/json/" + domain;
   const fetchRes = await fetchTimeout(url);
   if (fetchRes.ok) {
     const jsonData = await fetchRes.json();
-    return jsonData.ip;
+    return jsonData.query;
   } else Promise.reject(fetchRes);
 };
 
