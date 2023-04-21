@@ -139,7 +139,9 @@ var getIpInfoFromApiRes = function (res, resJson, api) {
             ip = resJson.ip;
             isp = resJson.asn.name;
             location = "".concat(resJson.country_code).concat(resJson.region ? ", " + resJson.region : "").concat(resJson.city ? ", " + resJson.city : "").concat(resJson.postal ? " " + resJson.postal : "");
-            timezone = resJson.time_zone.name + "\nUTC" + resJson.time_zone.offset;
+            timezone = resJson.time_zone.name
+                ? resJson.time_zone.name + "\nUTC" + resJson.time_zone.offset
+                : "";
             lat = Number(resJson.latitude);
             lng = Number(resJson.longitude);
             break;

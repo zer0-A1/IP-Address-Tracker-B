@@ -101,7 +101,9 @@ export const getIpInfoFromApiRes = (
       }${resJson.city ? ", " + resJson.city : ""}${
         resJson.postal ? " " + resJson.postal : ""
       }`;
-      timezone = resJson.time_zone.name + "\nUTC" + resJson.time_zone.offset;
+      timezone = resJson.time_zone.name
+        ? resJson.time_zone.name + "\nUTC" + resJson.time_zone.offset
+        : "";
       lat = Number(resJson.latitude);
       lng = Number(resJson.longitude);
       break;
