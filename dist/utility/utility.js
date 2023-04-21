@@ -213,14 +213,8 @@ var isValidApiResponse = function (api, data) {
     return isValid;
 };
 // get domain.tld from url
-// regex from "https://stackoverflow.com/a/56813210"
-var domainRegex = /(?<![^\/]\/)\b\w+\.\b\w{2,3}(?:\.\b\w{2})?(?=$|\/)/;
 var getDomainFromUrl = function (url) {
-    var matches = url.match(domainRegex);
-    if (!matches)
-        return undefined;
-    else
-        return matches[0];
+    return new URL(url).hostname.replace("www.", "");
 };
 exports.getDomainFromUrl = getDomainFromUrl;
 // adding timeout to fetch requests to fix vercel's

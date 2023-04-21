@@ -159,13 +159,8 @@ const isValidApiResponse = (api: string, data: any) => {
 };
 
 // get domain.tld from url
-// regex from "https://stackoverflow.com/a/56813210"
-const domainRegex = /(?<![^\/]\/)\b\w+\.\b\w{2,3}(?:\.\b\w{2})?(?=$|\/)/;
-
 export const getDomainFromUrl = (url: string) => {
-  const matches = url.match(domainRegex);
-  if (!matches) return undefined;
-  else return matches[0];
+  return new URL(url).hostname.replace("www.", "");
 };
 
 // adding timeout to fetch requests to fix vercel's
