@@ -1,12 +1,12 @@
-import { IRateLimiterOptions } from "rate-limiter-flexible";
-import { CorsOptions } from "cors";
+import { IRateLimiterOptions } from 'rate-limiter-flexible';
+import { CorsOptions } from 'cors';
 
 // middleware options
 
 // cors
 export const corsOptions: CorsOptions = {
-  origin: "https://rashidshamloo.github.io",
-  methods: "GET",
+  origin: 'https://rashidshamloo.github.io',
+  methods: 'GET',
   optionsSuccessStatus: 200,
 };
 

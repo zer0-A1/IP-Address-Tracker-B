@@ -1,40 +1,40 @@
 // express
-import express from "express";
+import express from 'express';
 
 // types
-import { Express, Request, Response } from "express";
+import { Express, Request, Response } from 'express';
 
 // middleware
 
 // cors
-import cors from "cors";
+import cors from 'cors';
 
 // rate-limit-flexible
-import rateLimitFlexible from "./middleware/rateLimitFlexible";
+import rateLimitFlexible from './middleware/rateLimitFlexible';
 
 // my custom middleware to add {author: "github.com/rashidshamloo"} and timestamp to all json responses
-import addToJson from "./middleware/addToJson";
+import addToJson from './middleware/addToJson';
 
 const fieldsToAdd = {
-  author: "github.com/rashidshamloo",
+  author: 'github.com/rashidshamloo',
   date: () => new Date().toJSON(),
 };
 
 // my custom middleware for checking the token
-import checkToken from "./middleware/checkToken";
+import checkToken from './middleware/checkToken';
 
 // my custom middleware to add 'X-Powered-By' header
-import poweredBy from "./middleware/poweredBy";
+import poweredBy from './middleware/poweredBy';
 
 // configs
 import {
   corsOptions,
   rateLimitFlexibleOptions,
   rateLimitFlexibleOptionsList,
-} from "./config/middleware";
+} from './config/middleware';
 
 // API data
-import { API_URL, API_PROVIDER } from "./config/api";
+import { API_URL, API_PROVIDER } from './config/api';
 
 // utility
 import {
@@ -43,7 +43,7 @@ import {
   fetchDataFromApi,
   getIpInfoFromApiRes,
   getDomainFromUrl,
-} from "./utility/utility";
+} from './utility/utility';
 
 // initialization
 const app: Express = express();
@@ -67,7 +67,7 @@ app.use(addToJson(fieldsToAdd));
 // provided ip or domain or
 // request ip if none of them are provided
 app.get(
-  "/",
+  '/',
   rateLimitFlexible(rateLimitFlexibleOptions),
   cors(corsOptions),
   checkToken,
@@ -80,18 +80,19 @@ app.get(
 
     // if api doesn't exist return error
     if (!req.query.api || !API_URL[req.query.api.toString()]) {
-      return res.status(400).json({ status: "fail", message: "bad request" });
+      return res.status(400).json({ status: 'fail', message: 'bad request' });
     }
     let ip;
     // if ip and domain are not set, set ip to request ip
-    if (!req.query.ip && !req.query.domain) {
+    // used undefined instead of ! to show error if domain is empty
+    if (req.query.ip === undefined && req.query.domain === undefined) {
       // get ip from "x-forwarded-for" header on vercel
       // and return error if can't get it
-      if (!(ip = req.headers["x-forwarded-for"]?.toString()))
-        return res.status(400).json({
-          status: "fail",
-          message: "no ip is provided and can't get request ip.",
-        });
+      if (!(ip = req.headers['x-forwarded-for']?.toString())) ip = '4.2.2.4';
+      // return res.status(400).json({
+      //   status: 'fail',
+      //   message: "no ip is provided and can't get request ip.",
+      // });
     }
     // if ip is set, set ip to it
     else if (req.query.ip) {
@@ -103,22 +104,20 @@ app.get(
       try {
         ip = await fetchIp(req.query.domain.toString());
       } catch (error: any) {
-        return res
-          .status(error.status || 500)
-          .json({
-            status: "fail",
-            message:
-              error.name === "AbortError"
-                ? "selected api took too long to respond."
-                : error.message,
-          });
+        return res.status(error.status || 500).json({
+          status: 'fail',
+          message:
+            error.name === 'AbortError'
+              ? 'selected api took too long to respond.'
+              : error.message,
+        });
       }
     }
     // validate the ip and return error if it fails
     if (!validateIp(ip))
       return res
         .status(400)
-        .json({ status: "fail", message: "wrong IP address" });
+        .json({ status: 'fail', message: 'wrong IP address' });
 
     // get the data from api
     let data;
@@ -128,10 +127,10 @@ app.get(
       // return error message and if the error was because of time out,
       // show a better message instead of just "aborted"
       return res.status(error.status || 500).json({
-        status: "fail",
+        status: 'fail',
         message:
-          error.name === "AbortError"
-            ? "selected api took too long to respond."
+          error.name === 'AbortError'
+            ? 'selected api took too long to respond.'
             : error.message,
       });
     }
@@ -143,7 +142,7 @@ app.get(
 // return api list
 // higher rate limit because we're not calling any external APIs
 app.get(
-  "/list",
+  '/list',
   rateLimitFlexible(rateLimitFlexibleOptionsList),
   cors(corsOptions),
   checkToken,

@@ -49,7 +49,7 @@ var rateLimitFlexible_1 = __importDefault(require("./middleware/rateLimitFlexibl
 // my custom middleware to add {author: "github.com/rashidshamloo"} and timestamp to all json responses
 var addToJson_1 = __importDefault(require("./middleware/addToJson"));
 var fieldsToAdd = {
-    author: "github.com/rashidshamloo",
+    author: 'github.com/rashidshamloo',
     date: function () { return new Date().toJSON(); },
 };
 // my custom middleware for checking the token
@@ -80,7 +80,7 @@ app.use((0, addToJson_1.default)(fieldsToAdd));
 // return ip info for selected api and
 // provided ip or domain or
 // request ip if none of them are provided
-app.get("/", (0, rateLimitFlexible_1.default)(middleware_1.rateLimitFlexibleOptions), (0, cors_1.default)(middleware_1.corsOptions), checkToken_1.default, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+app.get('/', (0, rateLimitFlexible_1.default)(middleware_1.rateLimitFlexibleOptions), (0, cors_1.default)(middleware_1.corsOptions), checkToken_1.default, function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var ip, error_1, data, error_2;
     var _a;
     return __generator(this, function (_b) {
@@ -93,16 +93,13 @@ app.get("/", (0, rateLimitFlexible_1.default)(middleware_1.rateLimitFlexibleOpti
                 //   );
                 // if api doesn't exist return error
                 if (!req.query.api || !api_1.API_URL[req.query.api.toString()]) {
-                    return [2 /*return*/, res.status(400).json({ status: "fail", message: "bad request" })];
+                    return [2 /*return*/, res.status(400).json({ status: 'fail', message: 'bad request' })];
                 }
-                if (!(!req.query.ip && !req.query.domain)) return [3 /*break*/, 1];
+                if (!(req.query.ip === undefined && req.query.domain === undefined)) return [3 /*break*/, 1];
                 // get ip from "x-forwarded-for" header on vercel
                 // and return error if can't get it
-                if (!(ip = (_a = req.headers["x-forwarded-for"]) === null || _a === void 0 ? void 0 : _a.toString()))
-                    return [2 /*return*/, res.status(400).json({
-                            status: "fail",
-                            message: "no ip is provided and can't get request ip.",
-                        })];
+                if (!(ip = (_a = req.headers['x-forwarded-for']) === null || _a === void 0 ? void 0 : _a.toString()))
+                    ip = '4.2.2.4';
                 return [3 /*break*/, 6];
             case 1:
                 if (!req.query.ip) return [3 /*break*/, 2];
@@ -119,12 +116,10 @@ app.get("/", (0, rateLimitFlexible_1.default)(middleware_1.rateLimitFlexibleOpti
                 return [3 /*break*/, 6];
             case 5:
                 error_1 = _b.sent();
-                return [2 /*return*/, res
-                        .status(error_1.status || 500)
-                        .json({
-                        status: "fail",
-                        message: error_1.name === "AbortError"
-                            ? "selected api took too long to respond."
+                return [2 /*return*/, res.status(error_1.status || 500).json({
+                        status: 'fail',
+                        message: error_1.name === 'AbortError'
+                            ? 'selected api took too long to respond.'
                             : error_1.message,
                     })];
             case 6:
@@ -132,7 +127,7 @@ app.get("/", (0, rateLimitFlexible_1.default)(middleware_1.rateLimitFlexibleOpti
                 if (!(0, utility_1.validateIp)(ip))
                     return [2 /*return*/, res
                             .status(400)
-                            .json({ status: "fail", message: "wrong IP address" })];
+                            .json({ status: 'fail', message: 'wrong IP address' })];
                 _b.label = 7;
             case 7:
                 _b.trys.push([7, 9, , 10]);
@@ -145,9 +140,9 @@ app.get("/", (0, rateLimitFlexible_1.default)(middleware_1.rateLimitFlexibleOpti
                 // return error message and if the error was because of time out,
                 // show a better message instead of just "aborted"
                 return [2 /*return*/, res.status(error_2.status || 500).json({
-                        status: "fail",
-                        message: error_2.name === "AbortError"
-                            ? "selected api took too long to respond."
+                        status: 'fail',
+                        message: error_2.name === 'AbortError'
+                            ? 'selected api took too long to respond.'
                             : error_2.message,
                     })];
             case 10: 
@@ -158,7 +153,7 @@ app.get("/", (0, rateLimitFlexible_1.default)(middleware_1.rateLimitFlexibleOpti
 }); });
 // return api list
 // higher rate limit because we're not calling any external APIs
-app.get("/list", (0, rateLimitFlexible_1.default)(middleware_1.rateLimitFlexibleOptionsList), (0, cors_1.default)(middleware_1.corsOptions), checkToken_1.default, function (_, res) {
+app.get('/list', (0, rateLimitFlexible_1.default)(middleware_1.rateLimitFlexibleOptionsList), (0, cors_1.default)(middleware_1.corsOptions), checkToken_1.default, function (_, res) {
     var apiList = Object.keys(api_1.API_PROVIDER).map(function (api) {
         return { name: api, domain: (0, utility_1.getDomainFromUrl)(api_1.API_PROVIDER[api]) };
     });

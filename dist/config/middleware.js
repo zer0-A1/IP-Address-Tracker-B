@@ -4,8 +4,8 @@ exports.rateLimitFlexibleOptionsList = exports.rateLimitFlexibleOptions = export
 // middleware options
 // cors
 exports.corsOptions = {
-    origin: "https://rashidshamloo.github.io",
-    methods: "GET",
+    origin: 'https://rashidshamloo.github.io',
+    methods: 'GET',
     optionsSuccessStatus: 200,
 };
 // rate-limit
