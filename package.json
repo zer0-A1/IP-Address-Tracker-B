@@ -25,6 +25,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "fetch-multi-signal": "^1.0.1",
     "rate-limiter-flexible": "^2.4.1"
   },
   "devDependencies": {

@@ -1,8 +1,11 @@
 // API config
-import { API_PROVIDER, API_URL } from "../config/api";
+import { API_PROVIDER, API_URL } from '../config/api';
+
+// fetch-multi-signal
+import fetchMS from 'fetch-multi-signal';
 
 // types
-import { Response } from "express";
+import { Response } from 'express';
 
 // interfaces
 interface ipInfo {
@@ -23,18 +26,18 @@ export const fetchDataFromApi = async (
   ipAddress: string,
   api: string
 ) => {
-  let url = "";
-  if (api === "ipdata") url = API_URL[api].replace("query", ipAddress);
+  let url = '';
+  if (api === 'ipdata') url = API_URL[api].replace('query', ipAddress);
   else url = API_URL[api] + ipAddress;
-  const fetchRes = await fetchTimeout(url);
+  const fetchRes = await fetchMS(url, { timeout: 6000 });
   if (fetchRes.ok) {
     const data = await fetchRes.json();
     if (isValidApiResponse(api, data)) return data;
     else
       res.status(500).json({
-        status: "fail",
+        status: 'fail',
         message:
-          "selected api is not working. it may be down or may have reached the max request limit.",
+          'selected api is not working. it may be down or may have reached the max request limit.',
       });
   } else Promise.reject(fetchRes);
 };
@@ -45,18 +48,18 @@ export const getIpInfoFromApiRes = (
   resJson: any,
   api: string
 ) => {
-  let [ip, isp, location, timezone] = Array(4).fill("");
+  let [ip, isp, location, timezone] = Array(4).fill('');
   let [lat, lng] = Array(2).fill(0);
   switch (api) {
-    case "ipify":
+    case 'ipify':
       ip = resJson.ip;
       isp = resJson.isp;
       location = `${resJson.location.country}, ${resJson.location.region}, ${resJson.location.city} ${resJson.location.postalCode}`;
-      timezone = "UTC" + resJson.location.timezone;
+      timezone = 'UTC' + resJson.location.timezone;
       lat = Number(resJson.location.lat);
       lng = Number(resJson.location.lng);
       break;
-    case "ip-api":
+    case 'ip-api':
       ip = resJson.query;
       isp = resJson.isp;
       location = `${resJson.country}, ${resJson.regionName}, ${resJson.city} ${resJson.zip}`;
@@ -64,53 +67,53 @@ export const getIpInfoFromApiRes = (
       lat = Number(resJson.lat);
       lng = Number(resJson.lon);
       break;
-    case "ipgeolocation":
+    case 'ipgeolocation':
       ip = resJson.ip;
       isp = resJson.isp;
       location = `${resJson.country_code2}, ${resJson.state_prov}, ${resJson.city} ${resJson.zipcode}`;
       timezone =
         resJson.time_zone.name +
-        "\n" +
-        "UTC" +
-        (resJson.time_zone.offset > 0 ? "+" : "") +
+        '\n' +
+        'UTC' +
+        (resJson.time_zone.offset > 0 ? '+' : '') +
         resJson.time_zone.offset;
       lat = Number(resJson.latitude);
       lng = Number(resJson.longitude);
       break;
-    case "ipwho":
+    case 'ipwho':
       ip = resJson.ip;
       isp = resJson.connection.isp;
       location = `${resJson.country_code}, ${resJson.region}, ${resJson.city} ${resJson.postal}`;
-      timezone = resJson.timezone.id + "\nUTC" + resJson.timezone.utc;
+      timezone = resJson.timezone.id + '\nUTC' + resJson.timezone.utc;
       lat = Number(resJson.latitude);
       lng = Number(resJson.longitude);
       break;
-    case "ip2location":
+    case 'ip2location':
       ip = resJson.ip;
       isp = resJson.as;
       location = `${resJson.country_code}, ${resJson.region_name}, ${resJson.city_name} ${resJson.zip_code}`;
-      timezone = "UTC" + resJson.time_zone;
+      timezone = 'UTC' + resJson.time_zone;
       lat = Number(resJson.latitude);
       lng = Number(resJson.longitude);
       break;
-    case "ipdata":
+    case 'ipdata':
       ip = resJson.ip;
       isp = resJson.asn.name;
       location = `${resJson.country_code}${
-        resJson.region ? ", " + resJson.region : ""
-      }${resJson.city ? ", " + resJson.city : ""}${
-        resJson.postal ? " " + resJson.postal : ""
+        resJson.region ? ', ' + resJson.region : ''
+      }${resJson.city ? ', ' + resJson.city : ''}${
+        resJson.postal ? ' ' + resJson.postal : ''
       }`;
       timezone = resJson.time_zone.name
-        ? resJson.time_zone.name + "\nUTC" + resJson.time_zone.offset
-        : "N/A";
+        ? resJson.time_zone.name + '\nUTC' + resJson.time_zone.offset
+        : 'N/A';
       lat = Number(resJson.latitude);
       lng = Number(resJson.longitude);
       break;
     default:
       return res
         .status(500)
-        .json({ status: "fail", message: "no API provided" });
+        .json({ status: 'fail', message: 'no API provided' });
   }
   const ipinfo: ipInfo = {
     ip: ip,
@@ -126,13 +129,13 @@ export const getIpInfoFromApiRes = (
 
 // fetch IP of domain
 export const fetchIp = async (domain: string) => {
-  const url = "http://ip-api.com/json/" + domain;
-  const fetchRes = await fetchTimeout(url);
+  const url = 'http://ip-api.com/json/' + domain;
+  const fetchRes = await fetchMS(url, { timeout: 6000 });
   if (fetchRes.ok) {
     const jsonData = await fetchRes.json();
     // throw error if domain name was wrong
-    if (jsonData.status === "fail" && jsonData.message === "invalid query")
-      throw { name: "wrongDomain", message: "wrong domain name." };
+    if (jsonData.status === 'fail' && jsonData.message === 'invalid query')
+      throw { name: 'wrongDomain', message: 'wrong domain name.' };
     else return jsonData.query;
   } else Promise.reject(fetchRes);
 };
@@ -153,13 +156,13 @@ const isValidApiResponse = (api: string, data: any) => {
   if (!data) return false;
   let isValid = false;
   switch (api) {
-    case "ip-api":
+    case 'ip-api':
       if (data.query) isValid = true;
       break;
-    case "ipgeolocation":
-    case "ipwho":
-    case "ip2location":
-    case "ipdata":
+    case 'ipgeolocation':
+    case 'ipwho':
+    case 'ip2location':
+    case 'ipdata':
     default:
       if (data.ip) isValid = true;
       break;
@@ -169,24 +172,5 @@ const isValidApiResponse = (api: string, data: any) => {
 
 // get domain.tld from url
 export const getDomainFromUrl = (url: string) => {
-  return new URL(url).hostname.replace("www.", "");
-};
-
-// adding timeout to fetch requests to fix vercel's
-// "This Serverless Function has timed out." error
-const fetchTimeout = async (
-  res: RequestInfo | URL,
-  options: RequestInit | undefined = {}
-) => {
-  // 6 seconds limit
-  const limit = 6000;
-
-  const controller = new AbortController();
-  const timououtId = setTimeout(() => controller.abort(), limit);
-  const fetchRes = await fetch(res, {
-    ...options,
-    signal: controller.signal,
-  });
-  clearTimeout(timououtId);
-  return fetchRes;
+  return new URL(url).hostname.replace('www.', '');
 };
