@@ -88,7 +88,6 @@ app.get(
     if (req.query.ip === undefined && req.query.domain === undefined) {
       // get ip from "x-forwarded-for" header on vercel
       // and return error if can't get it
-      console.log(req);
       if (!(ip = req.headers['x-forwarded-for']?.toString()))
         return res.status(400).json({
           status: 'fail',
