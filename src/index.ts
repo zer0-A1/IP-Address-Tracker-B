@@ -88,11 +88,12 @@ app.get(
     if (req.query.ip === undefined && req.query.domain === undefined) {
       // get ip from "x-forwarded-for" header on vercel
       // and return error if can't get it
-      if (!(ip = req.headers['x-forwarded-for']?.toString())) ip = '4.2.2.4';
-      // return res.status(400).json({
-      //   status: 'fail',
-      //   message: "no ip is provided and can't get request ip.",
-      // });
+      console.log(req);
+      if (!(ip = req.headers['x-forwarded-for']?.toString()))
+        return res.status(400).json({
+          status: 'fail',
+          message: "no ip is provided and can't get request ip.",
+        });
     }
     // if ip is set, set ip to it
     else if (req.query.ip) {
