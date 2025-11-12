@@ -1,6 +1,6 @@
 # Front End Mentor - Project 033 - IP Address Tracker - Backend
 
-This is the back-end API for [IP Address Tracker](https://github.com/rashidshamloo/fem_033_ip-address-tracker) written in Node.js/Express.js
+This is the back-end API for [IP Address Tracker](https://github.com/zer0-A1/IP-Address-Tracker-B) written in Node.js/Express.js
 
 ## Table of contents
 
@@ -14,7 +14,7 @@ This is the back-end API for [IP Address Tracker](https://github.com/rashidshaml
 
 ### Features
 
-- CORS (using `cors()` middleware - { 'https://rashidshamloo.github.io', methods: 'GET' })
+- CORS (using `cors()` middleware - { 'https://zer0-a1.github', methods: 'GET' })
 - Rate limiting per IP address (using `rate-limiter-flexible` - 100 for '/' end point and 1000 for '/list')
 - Token authentication (using custom middleware - random key checked for each request)
 - Added custom JSON fields for all requests (using custom middleware - author and date timestamp)
@@ -33,7 +33,7 @@ This is the back-end API for [IP Address Tracker](https://github.com/rashidshaml
   "lat": 39.03,
   "lng": -77.5,
   "provider": "http://ip-api.com",
-  "author": "github.com/rashidshamloo",
+  "author": "github.com/zer0-A1",
   "date": "2023-04-30T06:03:28.898Z"
 }
 ```
@@ -48,8 +48,5 @@ This is the back-end API for [IP Address Tracker](https://github.com/rashidshaml
 
 ## Author
 
-- Portfolio - [rashidshamloo.ir](https://www.rashidshamloo.ir)
-- Linkedin - [rashid-shamloo](https://www.linkedin.com/in/rashid-shamloo/)
-- Frontend Mentor - [@rashidshamloo](https://www.frontendmentor.io/profile/rashidshamloo)
-- Twitter - [@rashidshamloo](https://www.twitter.com/rashidshamloo)
-- Dev.to - [@rashidshamloo](https://dev.to/rashidshamloo)
+- Portfolio - [taroshibusawa.plateful.info](https://taroshibusawa.plateful.info)
+- Linkedin - [taroshibusawa](https://www.linkedin.com/in/taro-shibusawa-76378b382/)
