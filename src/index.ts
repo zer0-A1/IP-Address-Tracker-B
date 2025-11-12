@@ -12,11 +12,11 @@ import cors from 'cors';
 // rate-limit-flexible
 import rateLimitFlexible from './middleware/rateLimitFlexible';
 
-// my custom middleware to add {author: "github.com/rashidshamloo"} and timestamp to all json responses
+// my custom middleware to add {author: "github.com/zer0-A1"} and timestamp to all json responses
 import addToJson from './middleware/addToJson';
 
 const fieldsToAdd = {
-  author: 'github.com/rashidshamloo',
+  author: 'github.com/zer0-A1',
   date: () => new Date().toJSON(),
 };
 
@@ -75,7 +75,7 @@ app.get(
     // alternate to using cors() middleware
     //   res.setHeader(
     //     "Access-Control-Allow-Origin",
-    //     "https://rashidshamloo.github.io"
+    //     "https://zer0-a1.github.io"
     //   );
 
     // if api doesn't exist return error

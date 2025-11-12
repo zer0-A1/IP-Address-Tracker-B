@@ -46,10 +46,9 @@ var express_1 = __importDefault(require("express"));
 var cors_1 = __importDefault(require("cors"));
 // rate-limit-flexible
 var rateLimitFlexible_1 = __importDefault(require("./middleware/rateLimitFlexible"));
-// my custom middleware to add {author: "github.com/rashidshamloo"} and timestamp to all json responses
 var addToJson_1 = __importDefault(require("./middleware/addToJson"));
 var fieldsToAdd = {
-    author: 'github.com/rashidshamloo',
+    author: 'github.com/zer0-A1',
     date: function () { return new Date().toJSON(); },
 };
 // my custom middleware for checking the token
@@ -89,7 +88,7 @@ app.get('/', (0, rateLimitFlexible_1.default)(middleware_1.rateLimitFlexibleOpti
                 // alternate to using cors() middleware
                 //   res.setHeader(
                 //     "Access-Control-Allow-Origin",
-                //     "https://rashidshamloo.github.io"
+                //     "https://zer0-a1.github"
                 //   );
                 // if api doesn't exist return error
                 if (!req.query.api || !api_1.API_URL[req.query.api.toString()]) {
