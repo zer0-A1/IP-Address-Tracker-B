@@ -50,3 +50,4 @@ This is the back-end API for [IP Address Tracker](https://github.com/zer0-A1/IP-
 
 - Portfolio - [taroshibusawa.plateful.info](https://taroshibusawa.plateful.info)
 - Linkedin - [taroshibusawa](https://www.linkedin.com/in/taro-shibusawa-76378b382/)
+- GitHub - [zer0-A1](https://github.com/zer0-A1)
